@@ -50,34 +50,98 @@ class Player {
                 y: canvas.height - this.height - 20
             }
         }
-        
-  
+
+
     }
 
     draw() {
         //c.fillStyle = 'red';
         //c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.drawImage(
+            this.image,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height);
+
+    }
+
+    //Moving the Player:
+    update() {
         //Draw the image only if it has been loaded:
         if (this.image) {
-            c.drawImage(
-                this.image, 
-                this.position.x, 
-                this.position.y, 
-                this.width, 
-                this.height);
+            this.draw();
+            this.position.x += this.velocity.x;
         }
-        }
+    }
 
 }
 
 const player = new Player();
 
+//Control preset:
+const keys = {
+    a: {
+        pressed: false
+    },
+    d: {
+        pressed: false
+    },
+    space: {
+        pressed: false
+    }
+}
+
 // Loading the animate:
 function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = 'black'; // painting canvas black
-    c.fillRect(0,0, canvas.width, canvas.height) // painting whole canvas black;
-    player.draw();
+    c.fillRect(0, 0, canvas.width, canvas.height) // painting whole canvas black;
+    player.update();
+
+    //keys response
+    if (keys.a.pressed) {
+        player.velocity.x = -5;
+    } else if (keys.d.pressed) {
+        player.velocity.x = 5;
+    } else {
+        player.velocity.x = 0;
+        player.velocity.x = 0;
+    }
+
 }
 
+
 animate();
+
+//Move the player
+addEventListener('keydown', ({ key }) => {
+    switch (key) {
+        case 'a':
+            keys.a.pressed = true
+            break; a
+        case 'd':
+            player.velocity.x = 5;
+            keys.d.pressed = true
+            break;
+        case ' ':
+
+            break;
+    }
+})
+
+//Reset the keys:
+addEventListener('keyup', ({ key }) => {
+    switch (key) {
+        case 'a':
+            keys.a.pressed = false
+            break;
+        case 'd':
+            player.velocity.x = 5;
+            keys.d.pressed = false
+            break;
+        case ' ':
+
+            break;
+    }
+})
