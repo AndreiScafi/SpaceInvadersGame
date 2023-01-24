@@ -34,6 +34,9 @@ class Player {
             y: 0
         }
 
+        //spinning player animation
+        this.rotation = 0;
+
         //import image
         const image = new Image();
         image.src = './Assets/spaceship.png'
@@ -100,10 +103,10 @@ function animate() {
     player.update();
 
     //keys response
-    if (keys.a.pressed) {
-        player.velocity.x = -5;
-    } else if (keys.d.pressed) {
-        player.velocity.x = 5;
+    if (keys.a.pressed && player.position.x >= 0) {
+        player.velocity.x = -8;
+    } else if (keys.d.pressed && player.position.x + player.width <= canvas.width) {
+        player.velocity.x = 8;
     } else {
         player.velocity.x = 0;
         player.velocity.x = 0;
