@@ -25,3 +25,59 @@ const c = canvas.getContext('2d');
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+// Create a player:
+class Player {
+    constructor() {
+
+        this.velocity = {
+            x: 0,
+            y: 0
+        }
+
+        //import image
+        const image = new Image();
+        image.src = './Assets/spaceship.png'
+        //Loading image
+        image.onload = () => {
+            const scale = 0.15;
+            this.image = image;
+            this.width = image.width * scale;
+            this.height = image.height * scale;
+
+            //Positioning the player:
+            this.position = {
+                x: canvas.width / 2 - this.width / 2,
+                y: canvas.height - this.height - 20
+            }
+        }
+        
+  
+    }
+
+    draw() {
+        //c.fillStyle = 'red';
+        //c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        //Draw the image only if it has been loaded:
+        if (this.image) {
+            c.drawImage(
+                this.image, 
+                this.position.x, 
+                this.position.y, 
+                this.width, 
+                this.height);
+        }
+        }
+
+}
+
+const player = new Player();
+
+// Loading the animate:
+function animate() {
+    requestAnimationFrame(animate);
+    c.fillStyle = 'black'; // painting canvas black
+    c.fillRect(0,0, canvas.width, canvas.height) // painting whole canvas black;
+    player.draw();
+}
+
+animate();
