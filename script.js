@@ -99,7 +99,33 @@ class Player {
 
 }
 
+//Creating a Projectile:
+class Projectile {
+    constructor({ position, velocity }) {
+        this.position = position;
+        this.velocity = velocity;
+
+        this.radius = 3;
+    }
+
+    draw() {
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        c.fillStyle = 'red';
+        c.fill();
+        c.closePath();
+    }
+
+    update() {
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+}
+
 const player = new Player();
+const projectiles = [];
+
 
 //Control preset:
 const keys = {
@@ -120,6 +146,18 @@ function animate() {
     c.fillStyle = 'black'; // painting canvas black
     c.fillRect(0, 0, canvas.width, canvas.height) // painting whole canvas black;
     player.update();
+    //Projectiles:
+    projectiles.forEach((projectile, index) => {
+        //Erase projectiles off screen:
+        if (projectile.position.y + projectile.radius <= 0) {
+            //Flash projectile bug fix
+            setTimeout(() => {
+                projectiles.splice(index, 1)
+            }, 0)
+        } else {
+            projectile.update()
+        }
+    })
 
     //keys response
     if (keys.a.pressed && player.position.x >= 0) {
@@ -149,7 +187,17 @@ addEventListener('keydown', ({ key }) => {
             keys.d.pressed = true
             break;
         case ' ':
-
+            projectiles.push(new Projectile({
+                position: {
+                    x: player.position.x + player.width / 2,
+                    y: player.position.y
+                },
+                velocity: {
+                    x: 0,
+                    y: -10
+                }
+            }))
+            //console.log(projectiles);
             break;
     }
 })
