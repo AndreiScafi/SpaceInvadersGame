@@ -22,8 +22,8 @@ const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
 // Canvas fills the whole window:
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 1024;
+canvas.height = 576;
 
 // Create a player:
 class Player {
