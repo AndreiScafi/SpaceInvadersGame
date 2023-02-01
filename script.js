@@ -125,7 +125,7 @@ class Projectile {
 
 // Create an invader:
 class Invader {
-    constructor() {
+    constructor({ position }) {
 
         this.velocity = {
             x: 0,
@@ -144,8 +144,8 @@ class Invader {
 
             //Positioning the invader:
             this.position = {
-                x: canvas.width / 2 - this.width / 2,
-                y: canvas.height / 2
+                x: position.x,
+                y: position.y
             }
         }
 
@@ -164,21 +164,65 @@ class Invader {
 
 
     }
-    //Moving the Player:
-    update() {
+    //Moving the Invader:
+    update({ velocity }) {
         //Draw the image only if it has been loaded:
         if (this.image) {
             this.draw();
-            this.position.x += this.velocity.x;
-            this.position.y += this.velocity.y;
+            this.position.x += velocity.x;
+            this.position.y += velocity.y;
         }
     }
 
 }
+//Creating a Grid:
+class Grid {
+    constructor() {
+        this.position = {
+            x: 0,
+            y: 0
+        }
+
+        this.velocity = {
+            x: 3,
+            y: 0
+        }
+
+        this.invaders = []
+
+        const columns = Math.floor(Math.random() * 10 + 5)//Range of columns
+        const rows = Math.floor(Math.random() * 5 + 2)//Range of rows
+
+        this.width = columns * 30;
+
+        for (let x = 0; x < columns; x++) {
+            for (let y = 0; y < rows; y++) {
+                this.invaders.push(new Invader({
+                    position: {
+                        x: x * 30,
+                        y: y * 30
+                    }
+                }))
+            }
+        }
+    }
+
+    update() {
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
+
+        this.velocity.y = 0;
+
+        if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
+            this.velocity.x = -this.velocity.x;
+            this.velocity.y = 30;
+        }
+    }
+}
 
 const player = new Player();
 const projectiles = [];
-const invader = new Invader();
+const grids = [new Grid()];
 
 
 //Control preset:
@@ -199,7 +243,6 @@ function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = 'black'; // painting canvas black
     c.fillRect(0, 0, canvas.width, canvas.height) // painting whole canvas black;
-    invader.update();
     player.update();
     //Projectiles:
     projectiles.forEach((projectile, index) => {
@@ -212,6 +255,14 @@ function animate() {
         } else {
             projectile.update()
         }
+    })
+
+    // Invaders Grids:
+    grids.forEach(grid => {
+        grid.update()
+        grid.invaders.forEach((invader) => {
+            invader.update({ velocity: grid.velocity });
+        })
     })
 
     //keys response
@@ -238,7 +289,6 @@ addEventListener('keydown', ({ key }) => {
             keys.a.pressed = true
             break; a
         case 'd':
-            player.velocity.x = 5;
             keys.d.pressed = true
             break;
         case ' ':
