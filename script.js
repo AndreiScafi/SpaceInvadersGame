@@ -222,7 +222,7 @@ class Grid {
 
 const player = new Player();
 const projectiles = [];
-const grids = [new Grid()];
+const grids = [];
 
 
 //Control preset:
@@ -237,6 +237,10 @@ const keys = {
         pressed: false
     }
 }
+
+//Spawn more Grids
+let frames = 0;
+let randomInterval = Math.floor((Math.random() * 500) + 500);
 
 // Loading the animate:
 function animate() {
@@ -276,6 +280,15 @@ function animate() {
         player.velocity.x = 0;
         player.rotation = 0;
     }
+
+    //Add more grids of enemies:
+    if (frames % randomInterval === 0) {
+        grids.push(new Grid());
+        randomInterval = Math.floor((Math.random() * 500) + 500);
+        frames = 0;
+    }
+
+    frames++
 
 }
 
