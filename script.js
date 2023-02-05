@@ -123,6 +123,28 @@ class Projectile {
     }
 }
 
+//Creating a Invader Projectile:
+class InvaderProjectile {
+    constructor({ position, velocity }) {
+        this.position = position;
+        this.velocity = velocity;
+
+        this.width = 3;
+        this.height = 10;
+    }
+
+    draw() {
+        c.fillStyle = 'white'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height)
+    }
+
+    update() {
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+}
+
 // Create an invader:
 class Invader {
     constructor({ position }) {
@@ -172,6 +194,21 @@ class Invader {
         }
     }
 
+    //Shooting mechanics
+    shoot(invaderProjectiles) {
+        invaderProjectiles.push(
+            new InvaderProjectile({
+                position: {
+                    x: this.position.x + this.width / 2,
+                    y: this.position.y + this.height
+                },
+                velocity: {
+                    x: 0,
+                    y: 5
+                }
+            })
+        )
+    }
 }
 //Creating a Grid:
 class Grid {
@@ -223,6 +260,9 @@ const player = new Player();
 const projectiles = [];
 const grids = [];
 
+//Invaders Shooting machanics
+const invaderProjectiles = [];
+
 
 //Control preset:
 const keys = {
@@ -241,12 +281,30 @@ const keys = {
 let frames = 0;
 let randomInterval = Math.floor((Math.random() * 500) + 500);
 
+
 // Loading the animate:
 function animate() {
     requestAnimationFrame(animate)
     c.fillStyle = 'black' // painting canvas black
     c.fillRect(0, 0, canvas.width, canvas.height) // painting whole canvas black;
     player.update()
+    // Invaders shooting machanics
+    invaderProjectiles.forEach((invaderProjectile, index) => {
+        if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
+            setTimeout(() => {
+                invaderProjectiles.splice(index, 1)
+            }, 0)
+        } else invaderProjectile.update()
+
+        if (
+            invaderProjectile.position.y + invaderProjectile.height >= player.position.y &&
+            invaderProjectile.position.x + invaderProjectile.width >= player.position.x &&
+            invaderProjectile.position.x <= player.position.x + player.width
+        ) {
+            console.log('you lose')
+        }
+    })
+
     //Projectiles:
     projectiles.forEach((projectile, index) => {
         //Erase projectiles off screen:
@@ -263,6 +321,11 @@ function animate() {
     // Invaders Grids:
     grids.forEach((grid, gridIndex) => {
         grid.update()
+
+        //Spawning invaders projectiles
+        if (frames % 100 === 0 && grid.invaders.length > 0) {
+            grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(invaderProjectiles)
+        }
         grid.invaders.forEach((invader, i) => {
             invader.update({ velocity: grid.velocity })
 
@@ -360,6 +423,7 @@ addEventListener('keyup', ({ key }) => {
             keys.d.pressed = false
             break;
         case ' ':
+            keys.space.pressed = false
             break;
     }
 })
