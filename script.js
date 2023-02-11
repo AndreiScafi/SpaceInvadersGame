@@ -17,6 +17,9 @@
 14 - Fixed-width canvas.
 */
 
+//Game over screen:
+const gameOverEl = document.querySelector('.gameOver');
+
 //Create a Score:
 const scoreEl = document.getElementById('scoreEl');
 
@@ -421,7 +424,8 @@ function animate() {
             //Stop game:
             setTimeout(() => {
                 game.active = false
-            }, 2000)
+                gameOverEl.classList.add('active')
+            }, 1200)
 
             //Player explosion:
             createParticles({
