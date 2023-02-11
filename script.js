@@ -37,6 +37,9 @@ class Player {
         //spinning player animation
         this.rotation = 0;
 
+        //vanishing player whe his loose:
+        this.opacity = 1;
+
         //import image
         const image = new Image();
         image.src = './Assets/spaceship.png'
@@ -63,6 +66,7 @@ class Player {
 
         //Rotation function:
         c.save();
+        c.globalAlpha = this.opacity
         c.translate(
             player.position.x + player.width / 2,
             player.position.y + player.height / 2
@@ -316,6 +320,12 @@ const keys = {
 let frames = 0;
 let randomInterval = Math.floor((Math.random() * 500) + 500);
 
+//Stopo and start game
+let game = {
+    over: false,
+    active: true
+}
+
 //Create background star with particles:
 for (let i = 0; i < 100; i++) {
     particles.push(new Particle({
@@ -357,6 +367,7 @@ function createParticles({ object, color, fades }) {
 
 // Loading the animate:
 function animate() {
+    if (!game.active) return
     requestAnimationFrame(animate)
     c.fillStyle = 'black' // painting canvas black
     c.fillRect(0, 0, canvas.width, canvas.height) // painting whole canvas black;
@@ -392,10 +403,21 @@ function animate() {
             invaderProjectile.position.x + invaderProjectile.width >= player.position.x &&
             invaderProjectile.position.x <= player.position.x + player.width
         ) {
+
+            //Losing condition:
+            console.log('you lose')
             setTimeout(() => {
                 invaderProjectiles.splice(index, 1)
+                player.opacity = 0
+                game.over = true
             }, 0)
-            console.log('you lose')
+
+            //Stop game:
+            setTimeout(() => {
+                game.active = false
+            }, 2000)
+
+            //Player explosion:
             createParticles({
                 object: player,
                 color: 'white',
@@ -496,6 +518,9 @@ animate()
 
 //Move the player
 addEventListener('keydown', ({ key }) => {
+
+    if (game.over) return
+
     switch (key) {
         case 'a':
             keys.a.pressed = true
