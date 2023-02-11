@@ -17,6 +17,9 @@
 14 - Fixed-width canvas.
 */
 
+//Create a Score:
+const scoreEl = document.getElementById('scoreEl');
+
 // Create a canvas:
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
@@ -326,6 +329,9 @@ let game = {
     active: true
 }
 
+//Score:
+let score = 0;
+
 //Create background star with particles:
 for (let i = 0; i < 100; i++) {
     particles.push(new Particle({
@@ -467,6 +473,10 @@ function animate() {
 
                         // remove invader and projectiles
                         if (invaderFound && projectileFound) {
+
+                            score += 100
+                            scoreEl.innerHTML = score
+
                             createParticles({
                                 object: invader,
                                 fades: true
